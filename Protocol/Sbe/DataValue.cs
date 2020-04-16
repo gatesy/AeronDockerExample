@@ -8,10 +8,10 @@ namespace AeronDockerExample.Protocol.Sbe
 {
     public sealed partial class DataValue
     {
-        public const ushort BlockLength = (ushort)32;
+        public const ushort BlockLength = (ushort)40;
         public const ushort TemplateId = (ushort)1;
         public const ushort SchemaId = (ushort)1;
-        public const ushort SchemaVersion = (ushort)1;
+        public const ushort SchemaVersion = (ushort)2;
         public const string SemanticType = "";
 
         private readonly DataValue _parentMessage;
@@ -225,6 +225,46 @@ namespace AeronDockerExample.Protocol.Sbe
             set
             {
                 _buffer.DoublePutLittleEndian(_offset + 24, value);
+            }
+        }
+
+
+        public const int TimestampId = 5;
+        public const int TimestampSinceVersion = 2;
+        public const int TimestampDeprecated = 0;
+        public bool TimestampInActingVersion()
+        {
+            return _actingVersion >= TimestampSinceVersion;
+        }
+
+        public static string TimestampMetaAttribute(MetaAttribute metaAttribute)
+        {
+            switch (metaAttribute)
+            {
+                case MetaAttribute.Epoch: return "";
+                case MetaAttribute.TimeUnit: return "";
+                case MetaAttribute.SemanticType: return "";
+                case MetaAttribute.Presence: return "required";
+            }
+
+            return "";
+        }
+
+        public const ulong TimestampNullValue = 0xffffffffffffffffUL;
+        public const ulong TimestampMinValue = 0x0UL;
+        public const ulong TimestampMaxValue = 0xfffffffffffffffeUL;
+
+        public ulong Timestamp
+        {
+            get
+            {
+                if (_actingVersion < 2) return 0xffffffffffffffffUL;
+
+                return _buffer.Uint64GetLittleEndian(_offset + 32);
+            }
+            set
+            {
+                _buffer.Uint64PutLittleEndian(_offset + 32, value);
             }
         }
 

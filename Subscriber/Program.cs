@@ -29,7 +29,9 @@ namespace Subscriber
 
             var guid = new Guid(instanceBytes);
             
-            Console.Out.WriteLine($"Instance={guid}; Id={dataValue.Id}; Index={dataValue.Index}; Value={dataValue.Value}");
+            Console.Out.WriteLine(
+                $"Instance={guid}; Id={dataValue.Id}; Index={dataValue.Index}; Value={dataValue.Value}; " +
+                $"Timestamp={DateTime.FromBinary((long) dataValue.Timestamp):O}");
         }
 
         static void Main(string[] args)

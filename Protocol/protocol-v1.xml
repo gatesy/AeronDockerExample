@@ -2,7 +2,7 @@
 <sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe"
                    package="AeronDockerExample.Protocol.Sbe"
                    id="1"
-                   version="1"
+                   version="2"
                    semanticVersion="0.1"
                    description=""
                    byteOrder="littleEndian">
@@ -14,6 +14,7 @@
             <type name="version" primitiveType="uint16"/>
         </composite>
         <type name="guid" primitiveType="uint8" length="16"/>
+        <type name="timestamp" primitiveType="uint64" sinceVersion="2"/>
     </types>
     
     <sbe:message name="DataValue" id="1" description="Basic message with a single data value in it">
@@ -21,5 +22,6 @@
         <field name="id" id="2" type="int32" description="Identifies the group this value belongs to"/>
         <field name="index" id="3" type="int32" description="Index of the value within the group"/>
         <field name="value" id="4" type="double" description="The value"/>
+        <field name="timestamp" id="5" type="timestamp" description="Message timestamp" sinceVersion="2"/> 
     </sbe:message>
 </sbe:messageSchema>

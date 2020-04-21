@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+    mediadriver:
+        build: ./MediaDriver
+        container_name: aeronmediadriver
+        shm_size: '512m'
+        ipc: shareable
+        ports: 
+            - '224.0.1.1:40456:40456/udp'
+    publisher1:
+        build:
+            context: .
+            dockerfile: ./Publisher/Dockerfile
+        ipc: container:aeronmediadriver
+        depends_on: 
+            - mediadriver
+        command: --period=00:00:00.5 --channel=aeron:udp?endpoint=224.0.1.1:40456
+    publisher2:
+        build:
+            context: .
+            dockerfile: ./Publisher/Dockerfile
+        ipc: container:aeronmediadriver
+        depends_on: 
+            - mediadriver
+        command: --period=00:00:00.7 --channel=aeron:udp?endpoint=224.0.1.1:40456
+    subscriber1:
+        build:
+            context: .
+            dockerfile: ./Subscriber/Dockerfile
+        ipc: container:aeronmediadriver
+        depends_on: 
+            - mediadriver
+        command:  --channel=aeron:udp?endpoint=224.0.1.1:40456
+    subscriber2:
+        build:
+            context: .
+            dockerfile: ./Subscriber/Dockerfile
+        ipc: container:aeronmediadriver
+        depends_on: 
+            - mediadriver
+        command:  --channel=aeron:udp?endpoint=224.0.1.1:40456

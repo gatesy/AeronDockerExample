@@ -78,14 +78,17 @@ namespace Publisher
                     }
                 }, ct);
 
-                Console.Out.WriteLine("Press enter key to quit");
-                Console.In.ReadLine();
-
-                cts.Cancel();
+                Console.CancelKeyPress += (o, args) =>
+                {
+                    args.Cancel = true;
+                    Console.Out.WriteLine("Cancel key event intercepted");
+                    cts.Cancel();
+                };
                 offerTask.GetAwaiter().GetResult();
             }
             catch (OperationCanceledException)
             {
+                Console.Out.WriteLine("Main loop cancelled.");
                 // we were terminated - ignore this.
             }
             catch (Exception e)

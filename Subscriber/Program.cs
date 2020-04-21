@@ -71,8 +71,14 @@ namespace Subscriber
                     }
                 }, ct);
 
-                Console.In.ReadLine();
-                cts.Cancel();
+                
+                Console.CancelKeyPress += (o, args) =>
+                {
+                    args.Cancel = true;
+                    Console.Out.WriteLine("Cancel key event intercepted");
+                    cts.Cancel();
+                };
+                
                 pollingTask.GetAwaiter().GetResult();
             }
             catch (OperationCanceledException)

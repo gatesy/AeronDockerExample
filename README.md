@@ -48,10 +48,10 @@ You can also specify the Aeron channel with `--channel` and the Aeron stream ID 
 ### Generate code from SBE schema
 In the `Protocol` library's directory run:
 ```
-java 
-    -Dsbe.target.language=uk.co.real_logic.sbe.generation.csharp.CSharp 
-    -Dsbe.csharp.generate.namespace.dir=false 
-    -Dsbe.output.dir=Sbe 
+java \
+    -Dsbe.target.language=uk.co.real_logic.sbe.generation.csharp.CSharp \
+    -Dsbe.csharp.generate.namespace.dir=false \
+    -Dsbe.output.dir=Sbe \
     -jar sbe-all-1.17.0.jar protocol-v1.xml
 ```
 
@@ -61,3 +61,14 @@ Now:
 * Multicast - DONE (locally)
 * Upload to Git - DONE
 * Cross box (laptop to workstation)
+
+### Run all the services using `docker-compose`
+In the project directory run the command:
+```
+docker-compose up
+```
+This will spark up a service that contains an Aeron media driver, two publishers and a subscriber. Stop it using Ctrl+C, or pass the `-d` flag in and then run
+```
+docker-compose down
+```
+To shut everything down.

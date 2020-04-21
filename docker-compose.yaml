@@ -6,7 +6,7 @@ services:
         shm_size: '512m'
         ipc: shareable
         ports: 
-            - '224.0.1.1:40456:40456/udp'
+            - 40456:40456/udp
     publisher1:
         build:
             context: .

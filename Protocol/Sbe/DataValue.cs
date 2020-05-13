@@ -115,6 +115,12 @@ namespace AeronDockerExample.Protocol.Sbe
             _buffer.Uint8Put(_offset + 0 + (index * 1), value);
         }
 
+        public ReadOnlySpan<byte> Instance
+        {
+            get => _buffer.AsReadOnlySpan<byte>(_offset + 0, InstanceLength);
+            set => value.CopyTo(_buffer.AsSpan<byte>(_offset + 0, InstanceLength));
+        }
+
         public const int IdId = 2;
         public const int IdSinceVersion = 0;
         public const int IdDeprecated = 0;

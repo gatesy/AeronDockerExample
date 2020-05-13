@@ -32,12 +32,8 @@ namespace Publisher
             dataValue.Index = ++_currentIndex;
             dataValue.Value = _randomValues.NextDouble();
             dataValue.Timestamp = (ulong) DateTime.UtcNow.ToBinary();
-
-            for (var i = 0; i < _guidBytes.Length; ++i)
-            {
-                dataValue.SetInstance(i, _guidBytes[i]);
-            }
-
+            dataValue.Instance = new ReadOnlySpan<byte>(_guidBytes);
+            
             return MessageHeader.Size + DataValue.BlockLength;
         }
     }

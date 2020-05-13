@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Adaptive.Aeron;
@@ -7,7 +8,8 @@ using CommandLine;
 
 namespace Subscriber
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal class Options
     {
         [Option('s', "stream-id", Default = 42)]
@@ -21,13 +23,7 @@ namespace Subscriber
     {
         static void OnDataValue(DataValue dataValue)
         {
-            var instanceBytes = new byte[DataValue.InstanceLength];
-            for (int i = 0; i < DataValue.InstanceLength; ++i)
-            {
-                instanceBytes[i] = dataValue.GetInstance(i);
-            }
-
-            var guid = new Guid(instanceBytes);
+            var guid = new Guid(dataValue.Instance);
             
             Console.Out.WriteLine(
                 $"Instance={guid}; Id={dataValue.Id}; Index={dataValue.Index}; Value={dataValue.Value}; " +

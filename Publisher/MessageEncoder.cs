@@ -6,15 +6,16 @@ namespace Publisher
 {
     public class MessageEncoder
     {
-        private readonly byte[] _guidBytes;
+        private Guid _guid;
         private readonly int _id;
-        private int _currentIndex = 0;
         private readonly Random _randomValues = new Random();
-
+        
+        private int _currentIndex;
+        
         public MessageEncoder(int id)
         {
             _id = id;
-            _guidBytes = Guid.NewGuid().ToByteArray();
+            _guid = Guid.NewGuid();
         }
 
         public int WriteNext(DirectBuffer buffer)
@@ -32,7 +33,7 @@ namespace Publisher
             dataValue.Index = ++_currentIndex;
             dataValue.Value = _randomValues.NextDouble();
             dataValue.Timestamp = (ulong) DateTime.UtcNow.ToBinary();
-            dataValue.Instance = new ReadOnlySpan<byte>(_guidBytes);
+            _guid.TryWriteBytes(dataValue.InstanceAsSpan());
             
             return MessageHeader.Size + DataValue.BlockLength;
         }

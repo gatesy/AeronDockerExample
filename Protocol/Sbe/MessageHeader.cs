@@ -6,8 +6,15 @@ using Org.SbeTool.Sbe.Dll;
 
 namespace AeronDockerExample.Protocol.Sbe
 {
+    /// <summary>
+    /// Message identifiers and length of message root
+    /// </summary>
     public sealed partial class MessageHeader
     {
+        public const ushort SbeSchemaId = (ushort)1;
+        public const ushort SbeSchemaVersion = (ushort)2;
+        public const int Size = 8;
+
         private DirectBuffer _buffer;
         private int _offset;
         private int _actingVersion;
@@ -19,7 +26,6 @@ namespace AeronDockerExample.Protocol.Sbe
             _buffer = buffer;
         }
 
-        public const int Size = 8;
 
         public const ushort BlockLengthNullValue = (ushort)65535;
         public const ushort BlockLengthMinValue = (ushort)0;

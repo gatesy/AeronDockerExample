@@ -6,6 +6,9 @@ using Org.SbeTool.Sbe.Dll;
 
 namespace AeronDockerExample.Protocol.Sbe
 {
+    /// <summary>
+    /// Basic message with a single data value in it
+    /// </summary>
     public sealed partial class DataValue
     {
         public const ushort BlockLength = (ushort)40;
@@ -35,6 +38,17 @@ namespace AeronDockerExample.Protocol.Sbe
             _actingBlockLength = BlockLength;
             _actingVersion = SchemaVersion;
             Limit = offset + _actingBlockLength;
+        }
+
+        public void WrapForEncodeAndApplyHeader(DirectBuffer buffer, int offset,  MessageHeader headerEncoder)
+        {
+            headerEncoder.Wrap(buffer, offset, SchemaVersion);
+            headerEncoder.BlockLength = BlockLength;
+            headerEncoder.TemplateId = TemplateId;
+            headerEncoder.SchemaId = SchemaId;
+            headerEncoder.Version = SchemaVersion;
+            
+            WrapForEncode(buffer, offset + MessageHeader.Size);
         }
 
         public void WrapForDecode(DirectBuffer buffer, int offset, int actingBlockLength, int actingVersion)
@@ -69,12 +83,14 @@ namespace AeronDockerExample.Protocol.Sbe
 
 
         public const int InstanceId = 1;
-        public const int InstanceSinceVersion = 0;
-        public const int InstanceDeprecated = 0;
-        public bool InstanceInActingVersion()
-        {
-            return _actingVersion >= InstanceSinceVersion;
-        }
+    public const int InstanceSinceVersion = 0;
+    public const int InstanceDeprecated = 0;
+    public bool InstanceInActingVersion()
+    {
+        return _actingVersion >= InstanceSinceVersion;
+    }
+
+        public const int InstanceOffset = 0;
 
         public static string InstanceMetaAttribute(MetaAttribute metaAttribute)
         {
@@ -95,6 +111,9 @@ namespace AeronDockerExample.Protocol.Sbe
 
         public const int InstanceLength = 16;
 
+        /// <summary>
+        /// Unique identifier of the instance sending this
+        /// </summary>
         public byte GetInstance(int index)
         {
             if ((uint) index >= 16)
@@ -105,6 +124,9 @@ namespace AeronDockerExample.Protocol.Sbe
             return _buffer.Uint8Get(_offset + 0 + (index * 1));
         }
 
+        /// <summary>
+        /// Unique identifier of the instance sending this
+        /// </summary>
         public void SetInstance(int index, byte value)
         {
             if ((uint) index >= 16)
@@ -115,19 +137,32 @@ namespace AeronDockerExample.Protocol.Sbe
             _buffer.Uint8Put(_offset + 0 + (index * 1), value);
         }
 
+        /// <summary>
+        /// Unique identifier of the instance sending this
+        /// </summary>
         public ReadOnlySpan<byte> Instance
         {
             get => _buffer.AsReadOnlySpan<byte>(_offset + 0, InstanceLength);
             set => value.CopyTo(_buffer.AsSpan<byte>(_offset + 0, InstanceLength));
         }
 
-        public const int IdId = 2;
-        public const int IdSinceVersion = 0;
-        public const int IdDeprecated = 0;
-        public bool IdInActingVersion()
+        /// <summary>
+        /// Unique identifier of the instance sending this
+        /// </summary>
+        public Span<byte> InstanceAsSpan()
         {
-            return _actingVersion >= IdSinceVersion;
+            return _buffer.AsSpan<byte>(_offset + 0, InstanceLength);
         }
+
+        public const int IdId = 2;
+    public const int IdSinceVersion = 0;
+    public const int IdDeprecated = 0;
+    public bool IdInActingVersion()
+    {
+        return _actingVersion >= IdSinceVersion;
+    }
+
+        public const int IdOffset = 16;
 
         public static string IdMetaAttribute(MetaAttribute metaAttribute)
         {
@@ -146,6 +181,9 @@ namespace AeronDockerExample.Protocol.Sbe
         public const int IdMinValue = -2147483647;
         public const int IdMaxValue = 2147483647;
 
+        /// <summary>
+        /// Identifies the group this value belongs to
+        /// </summary>
         public int Id
         {
             get
@@ -160,12 +198,14 @@ namespace AeronDockerExample.Protocol.Sbe
 
 
         public const int IndexId = 3;
-        public const int IndexSinceVersion = 0;
-        public const int IndexDeprecated = 0;
-        public bool IndexInActingVersion()
-        {
-            return _actingVersion >= IndexSinceVersion;
-        }
+    public const int IndexSinceVersion = 0;
+    public const int IndexDeprecated = 0;
+    public bool IndexInActingVersion()
+    {
+        return _actingVersion >= IndexSinceVersion;
+    }
+
+        public const int IndexOffset = 20;
 
         public static string IndexMetaAttribute(MetaAttribute metaAttribute)
         {
@@ -184,6 +224,9 @@ namespace AeronDockerExample.Protocol.Sbe
         public const int IndexMinValue = -2147483647;
         public const int IndexMaxValue = 2147483647;
 
+        /// <summary>
+        /// Index of the value within the group
+        /// </summary>
         public int Index
         {
             get
@@ -198,12 +241,14 @@ namespace AeronDockerExample.Protocol.Sbe
 
 
         public const int ValueId = 4;
-        public const int ValueSinceVersion = 0;
-        public const int ValueDeprecated = 0;
-        public bool ValueInActingVersion()
-        {
-            return _actingVersion >= ValueSinceVersion;
-        }
+    public const int ValueSinceVersion = 0;
+    public const int ValueDeprecated = 0;
+    public bool ValueInActingVersion()
+    {
+        return _actingVersion >= ValueSinceVersion;
+    }
+
+        public const int ValueOffset = 24;
 
         public static string ValueMetaAttribute(MetaAttribute metaAttribute)
         {
@@ -222,6 +267,9 @@ namespace AeronDockerExample.Protocol.Sbe
         public const double ValueMinValue = 4.9E-324d;
         public const double ValueMaxValue = 1.7976931348623157E308d;
 
+        /// <summary>
+        /// The value
+        /// </summary>
         public double Value
         {
             get
@@ -236,12 +284,14 @@ namespace AeronDockerExample.Protocol.Sbe
 
 
         public const int TimestampId = 5;
-        public const int TimestampSinceVersion = 2;
-        public const int TimestampDeprecated = 0;
-        public bool TimestampInActingVersion()
-        {
-            return _actingVersion >= TimestampSinceVersion;
-        }
+    public const int TimestampSinceVersion = 2;
+    public const int TimestampDeprecated = 0;
+    public bool TimestampInActingVersion()
+    {
+        return _actingVersion >= TimestampSinceVersion;
+    }
+
+        public const int TimestampOffset = 32;
 
         public static string TimestampMetaAttribute(MetaAttribute metaAttribute)
         {
@@ -260,6 +310,9 @@ namespace AeronDockerExample.Protocol.Sbe
         public const ulong TimestampMinValue = 0x0UL;
         public const ulong TimestampMaxValue = 0xfffffffffffffffeUL;
 
+        /// <summary>
+        /// Message timestamp
+        /// </summary>
         public ulong Timestamp
         {
             get
